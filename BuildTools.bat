@@ -18,7 +18,8 @@ cd %version%
 
 rem downloading and running buildtools
 title Downloading BuildTools.jar...
-bitsadmin /transfer bToolsDownload /download /priority normal https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar %cd%\BuildTools.jar
+bitsadmin /transfer bToolsDownload /download /priority normal https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar "%cd%\BuildTools.jar"
+timeout 3 /nobreak
 title Running BuildTools %version%
 java -jar BuildTools.jar --rev %version%
 del BuildTools.jar
