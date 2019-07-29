@@ -5,6 +5,7 @@ rem setting the variables
 set /p version="Version (1.x.x) = "
 set /p bungee="Bungee (y/n) = "
 set /p repos="Remove repo's after install (y/n) = "
+set /p run="Run server after install (y/n) = "
 
 set /a port=%RANDOM%+4096
 
@@ -133,3 +134,7 @@ echo   - minecraft:fill ~-2 ~-1 ~-2 ~2 ~-1 ~2 glass keep
 echo   '-':
 echo   - minecraft:fill ~-5 ~-1 ~-5 ~5 ~-1 ~5 air replace glass
 )>commands.yml
+
+if %run% == y (
+	run.bat
+)
