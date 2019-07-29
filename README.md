@@ -36,6 +36,7 @@ rem if repos deletion? delete repos
 if %repos% == y (
 	for /d %%B in (*) do rmdir /s /q %%B
 	del BuildTools.log.txt
+	del craftbukkit*.jar
 )
 
 rem creating run script and accepting eula
