@@ -10,6 +10,8 @@ title BuildTools Installation
 rem setting the variables
 set /p version="Version (1.x.x) = "
 set /p bungee="Bungee (y/n) = "
+set /p repos="Remove repo's after install (y/n) = "
+
 set /a port=%RANDOM%+4096
 
 rem making the directory for the specified version
@@ -17,7 +19,7 @@ title Creating directories...
 if exist %version% (
 	echo There is already a folder called "%version%",
 	echo Removing the existing "%version%" folder and creating a new one.
-	rmdir /s %version%
+	rmdir /s /q %version%
 )
 mkdir %version%
 cd %version%
@@ -29,6 +31,12 @@ timeout 3 /nobreak
 title Running BuildTools %version%
 java -jar BuildTools.jar --rev %version%
 del BuildTools.jar
+
+rem if repos deletion? delete repos
+if %repos% == y (
+	for /d %%B in (*) do rmdir /s /q %%B
+	del BuildTools.log.txt
+)
 
 rem creating run script and accepting eula
 title Writing necessary files...
