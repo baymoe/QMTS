@@ -37,7 +37,7 @@ rem creating run script and accepting eula
 title Writing necessary files...
 (
 echo @echo off
-echo title Spigot %version%
+echo title Spigot %version% (port=%port%)
 echo java -Xmx4G -jar spigot-%version%.jar 
 )>run.bat
 (
