@@ -57,12 +57,12 @@ if %bungee% == y (
 	echo   restart-on-crash: true
 	echo   restart-script: ./run.bat
 	echo messages:
-	echo   whitelist: "\xc2fWhitelist \xc2aenabled\xc2f."
-	echo   unknown-command: "\xc2cUnknown command. Type \xc2f/help\xc2c for help."
-	echo   server-full: "\xc2cThe server is full."
-	echo   outdated-client: "\xc2cOutdated client\xc2f. Please use \xc2c{0}"
-	echo   outdated-server: "\xc2cOutdated server\xc2f. I'm still on \xc2c{0}"
-	echo   restart: "\xc26Server is restarting"
+	echo   whitelist: "\xa7fWhitelist \xa7aenabled\xa7f."
+	echo   unknown-command: "\xa7cUnknown command. Type \xa7f/help\xa7c for help."
+	echo   server-full: "\xa7cThe server is full."
+	echo   outdated-client: "\xa7cOutdated client\xa7f. Please use \xa7c{0}"
+	echo   outdated-server: "\xa7cOutdated server\xa7f. I'm still on \xa7c{0}"
+	echo   restart: "\xa76Server is restarting"
 	echo world-settings:
 	echo   default:
 	echo     verbose: false
@@ -88,12 +88,12 @@ if %bungee% == y (
 	echo   restart-on-crash: true
 	echo   restart-script: ./run.bat
 	echo messages:
-	echo   whitelist: "\xc2fWhitelist \xc2aenabled\xc2f."
-	echo   unknown-command: "\xc2cUnknown command. Type \xc2f/help\xc2c for help."
-	echo   server-full: "\xc2cThe server is full."
-	echo   outdated-client: "\xc2cOutdated client\xc2f. Please use \xc2c{0}"
-	echo   outdated-server: "\xc2cOutdated server\xc2f. I'm still on \xc2c{0}"
-	echo   restart: "\xc26Server is restarting"
+	echo   whitelist: "\xa7fWhitelist \xa7aenabled\xa7f."
+	echo   unknown-command: "\xa7cUnknown command. Type \xa7f/help\xa7c for help."
+	echo   server-full: "\xa7cThe server is full."
+	echo   outdated-client: "\xa7cOutdated client\xa7f. Please use \xa7c{0}"
+	echo   outdated-server: "\xa7cOutdated server\xa7f. I'm still on \xa7c{0}"
+	echo   restart: "\xa76Server is restarting"
 	echo world-settings:
 	echo   default:
 	echo     verbose: false
