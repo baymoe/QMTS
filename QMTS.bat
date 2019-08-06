@@ -63,13 +63,16 @@ title Creating directories
 
 if exist "%gameType%%proxyType% %gameVersion%" (
 	echo A directory for "%gameType%%proxyType% %gameVersion%" already exists.
-	echo Deleting "%gameType%%proxyType% %gameVersion%"
-	rmdir /s /q "%gameType%%proxyType% %gameVersion%"
-)
+	set /p delete="Delete the old directory (y/n) = "
+	if %delete%== y (
+		echo Deleting "%gameType%%proxyType% %gameVersion%"
+		rmdir /s /q "%gameType%%proxyType% %gameVersion%"
+		echo Creating "%gameType%%proxyType% %gameVersion%"
+		mkdir "%gameType%%proxyType% %gameVersion%"
+	)
+) 
 
-echo Creating and entering "%gameType%%proxyType% %gameVersion%"
-mkdir "%gameType%%proxyType% %gameVersion%"
-
+echo Entering "%gameType%%proxyType% %gameVersion%"
 cd "%gameType%%proxyType% %gameVersion%"
 goto %gameType%%proxyType%
 
