@@ -185,15 +185,14 @@ if %serverType% == game (
 )
 
 :end
-echo 
-echo 
-echo 
-echo 
+echo.
+echo.
+echo.
 echo Thank you for using QMTS.
-echo Patch 2019
+echo Patch © 2019
 PAUSE
 if %run% == y (
-	run.bat
+	start run.bat
 )
 
 rem Patch © 2019
