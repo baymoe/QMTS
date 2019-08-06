@@ -63,16 +63,13 @@ title Creating directories
 
 if exist "%gameType%%proxyType% %gameVersion%" (
 	echo A directory for "%gameType%%proxyType% %gameVersion%" already exists.
-	set /p delete="Would you like to delete '%gameType%%proxyType% %gameVersion%'? (y/n) = "
-)
-if %delete% == y (
 	echo Deleting "%gameType%%proxyType% %gameVersion%"
 	rmdir /s /q "%gameType%%proxyType% %gameVersion%"
-	echo Creating and entering "%gameType%%proxyType% %gameVersion%"
-	mkdir "%gameType%%proxyType% %gameVersion%"
-) else (
-	echo Entering "%gameType%%proxyType% %gameVersion%"
 )
+
+echo Creating and entering "%gameType%%proxyType% %gameVersion%"
+mkdir "%gameType%%proxyType% %gameVersion%"
+
 cd "%gameType%%proxyType% %gameVersion%"
 goto %gameType%%proxyType%
 
@@ -99,7 +96,7 @@ if %buildtools% == n (
 	del BuildTools.jar
 )
 
-goto script
+goto final
 
 :final
 (
@@ -188,6 +185,10 @@ if %serverType% == game (
 )
 
 :end
+echo 
+echo 
+echo 
+echo 
 echo Thank you for using QMTS.
 echo Patch 2019
 PAUSE
