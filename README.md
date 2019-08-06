@@ -1,5 +1,5 @@
-# BTTSS
-##### (BuildTools Test Server Script)
+# Quick MC Test Server
+##### (also supports BuildTools)
 This is a pretty extensive BuildTools "Test Server" Script for windows.
 
 Below, you will find the entire script, there are included "remarks" or comments in there to describe what each part does.
