@@ -1,26 +1,27 @@
 @echo off
+Setlocal EnableDelayedExpansion
 title Quick Minecraft Test Server
 
 rem setting general variables
-set /a port=%RANDOM%+4096
+set /a port=!RANDOM!+4096
 set /p run="Run server after install (y/n) = "
 set /p fileTemplate="Install file templates (y/n) = "
 
 :serverType
 set /p serverType="Server type (g(ame)/p(roxy)) = "
 
-if /i %serverType% == game (
+if /i !serverType! == game (
 	goto gameType
-) else if /i %serverType% == g (
+) else if /i !serverType! == g (
 	set serverType=game
 	goto gameType
-) else if /i %serverType% == proxy (
+) else if /i !serverType! == proxy (
 	goto proxyType
-) else if /i %serverType% == p (
+) else if /i !serverType! == p (
 	set serverType=proxy
 	goto proxyType
 ) else (
-	echo "%serverType%" is an invalid option, please try again.
+	echo "!serverType!" is an invalid option, please try again.
 	goto serverType
 )
 echo Something went wrong, please restart
@@ -31,18 +32,18 @@ title Game server installation
 set /p gameType="Server (s(pigot)/p(aper)) = "
 set /p gameVersion="Version (1.x.x) = "
 
-if %gameType% == s (
+if !gameType! == s (
 	set gameType=spigot
 	goto directory
-) else if %gameType% == p (
+) else if !gameType! == p (
 	set gameType=paper
 	goto directory
-) else if %gameType% == spigot (
+) else if !gameType! == spigot (
 	goto directory
-) else if %gameType% == paper (
+) else if !gameType! == paper (
 	goto directory
 ) else (
-	echo %gameType% is not a valid response. Please try again.
+	echo !gameType! is not a valid response. Please try again.
 	goto gameType
 )
 
@@ -60,39 +61,42 @@ PAUSE
 
 :directory
 title Creating directories
+echo "!gameType!!proxyType! !gameVersion!"
 
-if exist "%gameType%%proxyType% %gameVersion%" (
-	echo A directory for "%gameType%%proxyType% %gameVersion%" already exists.
-	set /p delete="Delete the old directory (y/n) = "
-	if %delete%== y (
-		echo Deleting "%gameType%%proxyType% %gameVersion%"
-		rmdir /s /q "%gameType%%proxyType% %gameVersion%"
-		echo Creating "%gameType%%proxyType% %gameVersion%"
-		mkdir "%gameType%%proxyType% %gameVersion%"
+if exist "!gameType!!proxyType! !gameVersion!" (
+	echo A directory for "!gameType!!proxyType! !gameVersion!" already exists.
+	set /p delete="Delete the old directory y/n = "
+	if !delete!==y (
+		echo Deleting "!gameType!!proxyType! !gameVersion!"
+		rmdir /s /q "!gameType!!proxyType! !gameVersion!"
+		echo Creating "!gameType!!proxyType! !gameVersion!"
+		mkdir "!gameType!!proxyType! !gameVersion!"
 	)
-) 
-
-echo Entering "%gameType%%proxyType% %gameVersion%"
-cd "%gameType%%proxyType% %gameVersion%"
-goto %gameType%%proxyType%
+) else (
+	echo Creating "!gameType!!proxyType! !gameVersion!"
+	mkdir "!gameType!!proxyType! !gameVersion!"
+)
+echo Entering "!gameType!!proxyType! !gameVersion!"
+cd "!gameType!!proxyType! !gameVersion!"
+goto !gameType!!proxyType!
 
 echo Something went wrong, please restart
 PAUSE
 
 :spigot
-title Spigot %gameVersion% installation.
+title Spigot !gameVersion! installation.
 set /p buildtools="Keep repositories after install (y/n) = "
 
-if %fileTemplate% == y (
+if !fileTemplate! == y (
 	set /p gameBungee="Set up as bungee server (y/n) = "
 )
 
 title Downloading BuildTools
-bitsadmin /transfer buildToolsDownload /download /priority normal https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar "%cd%\BuildTools.jar"
-title Running BuildTools %gameVersion%
-java -jar -Xmx1024M -Xms1024M BuildTools.jar --rev %gameVersion%
+bitsadmin /transfer buildToolsDownload /download /priority normal https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar "!cd!\BuildTools.jar"
+title Running BuildTools !gameVersion!
+java -jar -Xmx1024M -Xms1024M BuildTools.jar --rev !gameVersion!
 
-if %buildtools% == n (
+if !buildtools! == n (
 	for /d %%B in (*) do rmdir /s /q %%B
 	del BuildTools.log.txt
 	del craftbukkit*.jar
@@ -104,8 +108,8 @@ goto final
 :final
 (
 	echo @echo off
-	echo title %serverType% - %proxyType%%gameType% - %port%
-	echo java -Xmx2G -Xms2G -jar %proxyType%%gameType%-%gameVersion%.jar
+	echo title !serverType! - !proxyType!!gameType! - !port!
+	echo java -Xmx2G -Xms2G -jar !proxyType!!gameType!-!gameVersion!.jar
 )>run.bat
 (
 	echo "#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula)."
@@ -113,7 +117,7 @@ goto final
 	echo eula=true
 )>eula.txt
 
-if %fileTemplate% == y (
+if !fileTemplate! == y (
 	goto fileTemplate
 ) else (
 	goto end
@@ -123,7 +127,7 @@ echo Something went wrong, please restart
 PAUSE
 
 :fileTemplate
-if %serverType% == game (
+if !serverType! == game (
 	(
 		echo messages:
 		echo   whitelist: "\xa7fWhitelist \xa7aenabled\xa7f."
@@ -143,10 +147,10 @@ if %serverType% == game (
 	(
 		echo enable-command-block=true
 		echo max-world-size=16384
-		echo server-port=%port%
-		echo level-name=%proxyType%%gameType%-%gameVersion%
-		echo level-seed=%proxyType%%gameType%-%gameVersion%-%port%
-		echo motd=%proxyType%%gameType% %gameVersion% test server - port=%port%
+		echo server-port=!port!
+		echo level-name=!proxyType!!gameType!-!gameVersion!
+		echo level-seed=!proxyType!!gameType!-!gameVersion!-!port!
+		echo motd=!proxyType!!gameType! !gameVersion! test server - port=!port!
 	)>server.properties
 	(
 		echo aliases:
@@ -169,7 +173,7 @@ if %serverType% == game (
 		echo   '-':
 		echo   - minecraft:fill ~-5 ~-1 ~-5 ~5 ~-1 ~5 air replace glass
 	)>commands.yml
-	if %gameBungee% == y (
+	if !gameBungee! == y (
 		(
 			echo   bungeecord: true
 		)>>spigot.yml
@@ -178,12 +182,12 @@ if %serverType% == game (
 			echo prevent-proxy-connections=false
 		)>>server.properties
 	)
-	if %gameType% == paper (
+	if !gameType! == paper (
 		(
 			echo no paper.yml file templates yet
 		)
 	)
-) else if %serverType% == proxy (
+) else if !serverType! == proxy (
 	echo no proxy file templates yet
 )
 
@@ -194,7 +198,7 @@ echo.
 echo Thank you for using QMTS.
 echo Patch © 2019
 PAUSE
-if %run% == y (
+if !run! == y (
 	start run.bat
 )
 
