@@ -24,7 +24,7 @@ title Downloading BuildTools.jar...
 bitsadmin /transfer bToolsDownload /download /priority normal https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar "%cd%\BuildTools.jar"
 timeout 3 /nobreak
 title Running BuildTools %version%
-java -jar BuildTools.jar --rev %version%
+java -jar -Xmx1024M -Xms1024M BuildTools.jar --rev %version%
 del BuildTools.jar
 
 rem if repos deletion? delete repos
