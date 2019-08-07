@@ -3,55 +3,80 @@ Setlocal EnableDelayedExpansion
 title Quick Minecraft Test Server
 
 rem setting general variables
-set /a port=!RANDOM!+4096
-set /p run="Run server after install (y/n) = "
-set /p fileTemplate="Install file templates (y/n) = "
+set date="%DATE:~6,4%-%DATE:~3,2%-%DATE:~0,2%"
+
+:port
+choice /n /c abcdefghijklmnopqrstuvwxyz /d y /t 5 /m "Set a random port (y/n) = "
+if !ERRORLEVEL! == 14 (
+	set /p port="port = "
+) else if !ERRORLEVEL! == 25 (
+	set /a port=!RANDOM! %%192 + 32768
+	goto :run	
+) else (
+	goto port
+)
+
+:run
+choice /n /c abcdefghijklmnopqrstuvwxyz /d y /t 5 /m "Run server after install (y/n) = "
+if !ERRORLEVEL! == 25 (
+	set run=y
+) else if !ERRORLEVEL! == 14 (
+	set run=n
+) else (
+	goto run
+)
+
+:files
+choice /n /c abcdefghijklmnopqrstuvwxyz /d n /t 10 /m "Install file templates (y/n) = "
+if !ERRORLEVEL! == 25 (
+	set files=y
+) else if !ERRORLEVEL! == 14 (
+	set files=n
+) else (
+	goto files
+)
 
 :serverType
-set /p serverType="Server type (g(ame)/p(roxy)) = "
-
-if /i !serverType! == game (
-	goto gameType
-) else if /i !serverType! == g (
+choice /n /c abcdefghijklmnopqrstuvwxyz /d g /t 10 /m "Server type (game/proxy) = "
+if !ERRORLEVEL! == 7 (
 	set serverType=game
 	goto gameType
-) else if /i !serverType! == proxy (
-	goto proxyType
-) else if /i !serverType! == p (
+) else if !ERRORLEVEL! == 16 (
 	set serverType=proxy
+	set gameType="1.8+"
 	goto proxyType
 ) else (
-	echo "!serverType!" is an invalid option, please try again.
 	goto serverType
 )
+
 echo Something went wrong, please restart
 PAUSE
 
 :gameType
-title Game server installation
-set /p gameType="Server (s(pigot)/p(aper)) = "
-set /p gameVersion="Version (1.x.x) = "
+title QMTS ^| Game server installation
 
-if !gameType! == s (
+choice /n /c abcdefghijklmnopqrstuvwxyz /d p /t 10 /m "Server (spigot/paper) = "
+if !ERRORLEVEL! == 19 (
 	set gameType=spigot
-	goto directory
-) else if !gameType! == p (
+	goto gameVersion
+) else if !ERRORLEVEL! == 16 (
 	set gameType=paper
-	goto directory
-) else if !gameType! == spigot (
-	goto directory
-) else if !gameType! == paper (
-	goto directory
+	goto gameVersion
 ) else (
-	echo !gameType! is not a valid response. Please try again.
 	goto gameType
 )
+
+:gameVersion
+set /p gameVersion="Version (1.x.x) = "
+
+goto directory
 
 echo Something went wrong, please restart
 PAUSE
 
 :proxyType
-title Proxy server installation
+title QMTS ^| Proxy server installation
+
 set /p proxyType="Server (b(ungee)/w(aterfall)) = "
 
 goto directory
@@ -60,40 +85,64 @@ echo Something went wrong, please restart
 PAUSE
 
 :directory
-title Creating directories
-echo "!gameType!!proxyType! !gameVersion!"
+title QMTS ^| Creating directories...
 
-if exist "!gameType!!proxyType! !gameVersion!" (
-	echo A directory for "!gameType!!proxyType! !gameVersion!" already exists.
-	set /p delete="Delete the old directory y/n = "
-	if !delete!==y (
-		echo Deleting "!gameType!!proxyType! !gameVersion!"
-		rmdir /s /q "!gameType!!proxyType! !gameVersion!"
-		echo Creating "!gameType!!proxyType! !gameVersion!"
-		mkdir "!gameType!!proxyType! !gameVersion!"
+if exist "!gameType!!proxyType! !gameVersion! ^(port !port!^)" (
+	echo A directory for "!gameType!!proxyType! !gameVersion! ^(port !port!^)" already exists.
+	choice /n /c abcdefghijklmnopqrstuvwxyz /d y /t 10 /m "Delete the existing directory (y/n) = "
+	if !ERRORLEVEL! == 25 (
+		echo Deleting "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
+		rmdir /s /q "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
+		echo Creating "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
+		mkdir "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
+	) else if %ERRORLEVEL% == 14 (
+		goto enterDir
 	)
 ) else (
-	echo Creating "!gameType!!proxyType! !gameVersion!"
-	mkdir "!gameType!!proxyType! !gameVersion!"
+	echo Creating "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
+	mkdir "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
 )
-echo Entering "!gameType!!proxyType! !gameVersion!"
-cd "!gameType!!proxyType! !gameVersion!"
+
+:enterDir
+echo Entering "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
+cd "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
 goto !gameType!!proxyType!
 
 echo Something went wrong, please restart
 PAUSE
 
-:spigot
-title Spigot !gameVersion! installation.
-set /p buildtools="Keep repositories after install (y/n) = "
+:gameBungee
+if !files! == y (
+	choice /n /c abcdefghijklmnopqrstuvwxyz /d n /t 10 /m "Set up as bungee server (y/n) = "
+	if !ERRORLEVEL! == 25 (
+		set gameBungee=y
+		goto !gameType!Download
+	) else if !ERRORLEVEL! == 14 (
+		set gameBungee=n
+		goto !gameType!Download
+	) else (
+		goto gameBungee
+	)
+)
+goto !gameType!Download
 
-if !fileTemplate! == y (
-	set /p gameBungee="Set up as bungee server (y/n) = "
+:spigot
+title QMTS ^| Spigot !gameVersion! installation
+
+choice /n /c abcdefghijklmnopqrstuvwxyz /d n /t 10 /m "Keep repositories after install (y/n) = "
+if !ERRORLEVEL! == 25 (
+	set buildtools=y
+) else if %ERRORLEVEL% == 14 (
+	set buildtools=n
+) else (
+	goto spigot
 )
 
-title Downloading BuildTools
+goto gameBungee
+
+:spigotDownload
+rem certutil.exe -urlcache -split -f "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar" "!cd!\BuildTools.jar"
 bitsadmin /transfer buildToolsDownload /download /priority normal https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar "!cd!\BuildTools.jar"
-title Running BuildTools !gameVersion!
 java -jar -Xmx1024M -Xms1024M BuildTools.jar --rev !gameVersion!
 
 if !buildtools! == n (
@@ -105,19 +154,42 @@ if !buildtools! == n (
 
 goto final
 
+echo Something went wrong, please restart
+PAUSE
+
+:paper
+title QMTS ^| Paper !gameVersion! installation.
+
+goto gameBungee
+
+:paperDownload
+rem certutil.exe -urlcache "https://papermc.io/api/v1/paper/!gameVersion!/latest/download" "!cd!\!gameType!-!gameVersion!.jar"
+bitsadmin /transfer paperDownload /download /priority normal https://papermc.io/api/v1/paper/!gameVersion!/latest/download "!cd!\!gameType!-!gameVersion!.jar"
+
+goto final
+
+echo Something went wrong, please restart
+PAUSE
+
 :final
+Setlocal DisableDelayedExpansion
 (
 	echo @echo off
-	echo title !serverType! - !proxyType!!gameType! - !port!
-	echo java -Xmx2G -Xms2G -jar !proxyType!!gameType!-!gameVersion!.jar
+	echo title %serverType% ^^^| %proxyType%%gameType% ^^^(port %port%^^^)
+	echo java -Xmx2G -Xms2G -jar %proxyType%%gameType%-%gameVersion%.jar
 )>run.bat
+
 (
 	echo "#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula)."
 	echo "#Tue Jul 16 03:22:59 CEST 2019"
 	echo eula=true
 )>eula.txt
 
-if !fileTemplate! == y (
+(
+	echo server-port=%port%
+)>server.properties
+
+if %files% == y (
 	goto fileTemplate
 ) else (
 	goto end
@@ -127,7 +199,7 @@ echo Something went wrong, please restart
 PAUSE
 
 :fileTemplate
-if !serverType! == game (
+if %serverType% == game (
 	(
 		echo messages:
 		echo   whitelist: "\xa7fWhitelist \xa7aenabled\xa7f."
@@ -147,11 +219,10 @@ if !serverType! == game (
 	(
 		echo enable-command-block=true
 		echo max-world-size=16384
-		echo server-port=!port!
-		echo level-name=!proxyType!!gameType!-!gameVersion!
-		echo level-seed=!proxyType!!gameType!-!gameVersion!-!port!
-		echo motd=!proxyType!!gameType! !gameVersion! test server - port=!port!
-	)>server.properties
+		echo level-name=%proxyType%%gameType%-%gameVersion%
+		echo level-seed=%proxyType%%gameType%-%gameVersion%-%port%
+		echo motd=%proxyType%%gameType% %gameVersion% test server - port=%port%
+	)>>server.properties
 	(
 		echo aliases:
 		echo   ic:
@@ -173,7 +244,7 @@ if !serverType! == game (
 		echo   '-':
 		echo   - minecraft:fill ~-5 ~-1 ~-5 ~5 ~-1 ~5 air replace glass
 	)>commands.yml
-	if !gameBungee! == y (
+	if %gameBungee% == y (
 		(
 			echo   bungeecord: true
 		)>>spigot.yml
@@ -182,13 +253,19 @@ if !serverType! == game (
 			echo prevent-proxy-connections=false
 		)>>server.properties
 	)
-	if !gameType! == paper (
+	if %gameType% == paper (
 		(
 			echo no paper.yml file templates yet
 		)
 	)
-) else if !serverType! == proxy (
+	mkdir plugins
+	rem certutil.exe -urlcache -split -f "https://api.spiget.org/v2/resources/19254/versions/latest/download" "%cd%\plugins\ViaVersion-latest.jar"
+	bitsadmin /transfer viaVersionDownload /download /priority normal https://api.spiget.org/v2/resources/19254/versions/latest/download "%cd%\ViaVersion-latest.jar"
+) else if %serverType% == proxy (
 	echo no proxy file templates yet
+	mkdir plugins
+	rem certutil.exe -urlcache -split -f "https://api.spiget.org/v2/resources/19254/versions/latest/download" "%cd%\plugins\ViaVersion-latest.jar"
+	bitsadmin /transfer viaVersionDownload /download /priority normal https://api.spiget.org/v2/resources/19254/versions/latest/download "%cd%\plugins\ViaVersion-latest.jar"
 )
 
 :end
@@ -198,7 +275,7 @@ echo.
 echo Thank you for using QMTS.
 echo Patch © 2019
 PAUSE
-if !run! == y (
+if %run% == y (
 	start run.bat
 )
 
