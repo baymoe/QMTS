@@ -87,25 +87,29 @@ PAUSE
 :directory
 title QMTS ^| Creating directories...
 
-if exist "!gameType!!proxyType! !gameVersion! ^(port !port!^)" (
-	echo A directory for "!gameType!!proxyType! !gameVersion! ^(port !port!^)" already exists.
+if exist "!gameType!!proxyType! !gameVersion! port !port!" (
+	echo A directory for "!gameType!!proxyType! !gameVersion! port !port!" already exists.
 	choice /n /c abcdefghijklmnopqrstuvwxyz /d y /t 10 /m "Delete the existing directory (y/n) = "
 	if !ERRORLEVEL! == 25 (
-		echo Deleting "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
-		rmdir /s /q "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
-		echo Creating "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
-		mkdir "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
+		echo Deleting "!gameType!!proxyType! !gameVersion! port !port!"
+		rmdir /s /q "!gameType!!proxyType! !gameVersion! port !port!"
+		echo Creating "!gameType!!proxyType! !gameVersion! port !port!"
+		mkdir "!gameType!!proxyType! !gameVersion! port !port!"
 	) else if %ERRORLEVEL% == 14 (
 		goto enterDir
 	)
 ) else (
-	echo Creating "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
-	mkdir "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
+	echo Creating "!gameType!!proxyType! !gameVersion! port !port!"
+	mkdir "!gameType!!proxyType! !gameVersion! port !port!"
+)
+
+if exist BuildTools.jar (
+	xcopy /q /y BuildTools.jar "!gameType!!proxyType! !gameVersion! port !port!" 
 )
 
 :enterDir
-echo Entering "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
-cd "!gameType!!proxyType! !gameVersion! ^(port !port!^)"
+echo Entering "!gameType!!proxyType! !gameVersion! port !port!"
+cd "!gameType!!proxyType! !gameVersion! port !port!"
 goto !gameType!!proxyType!
 
 echo Something went wrong, please restart
@@ -141,8 +145,10 @@ if !ERRORLEVEL! == 25 (
 goto gameBungee
 
 :spigotDownload
-rem certutil.exe -urlcache -split -f "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar" "!cd!\BuildTools.jar"
-bitsadmin /transfer buildToolsDownload /download /priority normal https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar "!cd!\BuildTools.jar"
+if not exist BuildTools.jar (
+	rem certutil.exe -urlcache -split -f "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar" "!cd!\BuildTools.jar"
+	bitsadmin /transfer buildToolsDownload /download /priority normal https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar "!cd!\BuildTools.jar"
+)
 java -jar -Xmx1024M -Xms1024M BuildTools.jar --rev !gameVersion!
 
 if !buildtools! == n (
