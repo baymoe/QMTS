@@ -87,29 +87,31 @@ PAUSE
 :directory
 title QMTS ^| Creating directories...
 
-if exist "!gameType!!proxyType! !gameVersion! port !port!" (
-	echo A directory for "!gameType!!proxyType! !gameVersion! port !port!" already exists.
+if exist "!gameType!!proxyType!-!gameVersion!-port-!port!" (
+	echo A directory for "!gameType!!proxyType!-!gameVersion!-port-!port!" already exists.
 	choice /n /c abcdefghijklmnopqrstuvwxyz /d y /t 10 /m "Delete the existing directory (y/n) = "
 	if !ERRORLEVEL! == 25 (
-		echo Deleting "!gameType!!proxyType! !gameVersion! port !port!"
-		rmdir /s /q "!gameType!!proxyType! !gameVersion! port !port!"
-		echo Creating "!gameType!!proxyType! !gameVersion! port !port!"
-		mkdir "!gameType!!proxyType! !gameVersion! port !port!"
+		echo Deleting "!gameType!!proxyType!-!gameVersion!-port-!port!"
+		rmdir /s /q "!gameType!!proxyType!-!gameVersion!-port-!port!"
+		echo Creating "!gameType!!proxyType!-!gameVersion!-port-!port!"
+		mkdir "!gameType!!proxyType!-!gameVersion!-port-!port!"
 	) else if %ERRORLEVEL% == 14 (
 		goto enterDir
 	)
 ) else (
-	echo Creating "!gameType!!proxyType! !gameVersion! port !port!"
-	mkdir "!gameType!!proxyType! !gameVersion! port !port!"
+	echo Creating "!gameType!!proxyType!-!gameVersion!-port-!port!"
+	mkdir "!gameType!!proxyType!-!gameVersion!-port-!port!"
 )
 
-if exist BuildTools.jar (
-	xcopy /q /y BuildTools.jar "!gameType!!proxyType! !gameVersion! port !port!" 
+if !gameType! == spigot (
+	if exist BuildTools.jar (
+		xcopy /q /y BuildTools.jar "!gameType!!proxyType!-!gameVersion!-port-!port!" 
+	)
 )
 
 :enterDir
-echo Entering "!gameType!!proxyType! !gameVersion! port !port!"
-cd "!gameType!!proxyType! !gameVersion! port !port!"
+echo Entering "!gameType!!proxyType!-!gameVersion!-port-!port!"
+cd "!gameType!!proxyType!-!gameVersion!-port-!port!"
 goto !gameType!!proxyType!
 
 echo Something went wrong, please restart
@@ -266,12 +268,12 @@ if %serverType% == game (
 	)
 	mkdir plugins
 	rem certutil.exe -urlcache -split -f "https://api.spiget.org/v2/resources/19254/versions/latest/download" "%cd%\plugins\ViaVersion-latest.jar"
-	bitsadmin /transfer viaVersionDownload /download /priority normal https://api.spiget.org/v2/resources/19254/versions/latest/download "%cd%\ViaVersion-latest.jar"
+	rem bitsadmin /transfer viaVersionDownload /download /priority normal https://api.spiget.org/v2/resources/19254/versions/latest/download "%cd%\ViaVersion-latest.jar"
 ) else if %serverType% == proxy (
 	echo no proxy file templates yet
 	mkdir plugins
 	rem certutil.exe -urlcache -split -f "https://api.spiget.org/v2/resources/19254/versions/latest/download" "%cd%\plugins\ViaVersion-latest.jar"
-	bitsadmin /transfer viaVersionDownload /download /priority normal https://api.spiget.org/v2/resources/19254/versions/latest/download "%cd%\plugins\ViaVersion-latest.jar"
+	rem bitsadmin /transfer viaVersionDownload /download /priority normal https://api.spiget.org/v2/resources/19254/versions/latest/download "%cd%\plugins\ViaVersion-latest.jar"
 )
 
 :end
